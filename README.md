@@ -5,7 +5,6 @@ Este proyecto utiliza **Python** y **Machine Learning** para analizar el ecosist
 ## 🚀 Ver Dashboard en Vivo
 Puedes interactuar con los datos y probar el modelo predictivo aquí: 
 👉 https://melanynatalia.streamlit.app/
-Solo subes el archivo con los datos resultantes en este caso los puedes encontrar como udemy_Datos.csv
 
 
 ## 📝 Resumen del Proyecto
