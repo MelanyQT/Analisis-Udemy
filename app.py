@@ -12,14 +12,23 @@ BG, CARD, TEXT, SUBTEXT = '#0F172A', '#1E2938', '#F8FAFC', '#94A3B8'
 ACC, ACC2, WARN = '#38BDF8', '#818CF8', '#F43F5E'
 
 def clean_data(df):
-    # Limpieza de estudiantes (ruso) [cite: 58, 60]
-    df['students_clean'] = df['students'].apply(lambda x: int(''.join(c for c in str(x) if c.isdigit())) if any(c.isdigit() for c in str(x)) else 0)
-    # Limpieza de rating [cite: 65]
-    df['rating_clean'] = df['rating'].astype(str).str.replace(',', '.').astype(float)
-    # Mapeo de dificultad [cite: 68, 70, 73]
-    diff_map = {'Все уровни': 'Todos los niveles', 'Начальный': 'Principiante', 'Средний': 'Intermedio', 'Экспер特': 'Experto'}
-    df['difficulty_es'] = df['difficulty'].map(diff_map)
-    df.drop_duplicates(subset=['title'], inplace=True) [cite: 81]
+    # 1. Limpiar nombres de columnas (elimina espacios en blanco accidentales)
+    df.columns = df.columns.str.strip()
+    
+    # 2. Limpieza de estudiantes (maneja el texto en ruso del dataset)
+    if 'students' in df.columns:
+        df['students_clean'] = df['students'].apply(lambda x: int(''.join(c for c in str(x) if c.isdigit())) if any(c.isdigit() for c in str(x)) else 0) [cite: 58, 62]
+    
+    # 3. Limpieza de rating (convierte comas en puntos)
+    if 'rating' in df.columns:
+        df['rating_clean'] = df['rating'].astype(str).str.replace(',', '.').astype(float) [cite: 65]
+    
+    # 4. Eliminar duplicados de forma segura
+    if 'title' in df.columns:
+        df.drop_duplicates(subset=['title'], inplace=True) [cite: 81]
+    else:
+        st.error(f"Error: No se encontró la columna 'title'. Columnas detectadas: {list(df.columns)}")
+        
     return df
 
 st.title("📊 Análisis de Cursos Udemy")
