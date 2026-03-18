@@ -52,4 +52,36 @@ col1.metric("Cursos Totales", f"{len(df):,}")
 col2.metric("Precio Mediano", f"${df['price'].median():,.0f}")
 avg_rating = df[df['rating_clean'] > 0]['rating_clean'].mean()
 col3.metric("Rating Promedio", f"{avg_rating:.2f}")
-col4.
+col4.metric("Estudiantes (Máx)", f"{df['students_clean'].max()/1e6:.1f}M")
+
+st.divider()
+
+tab1, tab2, tab3 = st.tabs(["📉 Mercado", "🏆 Popularidad", "🤖 Predicción"])
+
+with tab1:
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Distribución de Precios")
+        fig1, ax1 = plt.subplots()
+        ax1.hist(df['price'], bins=20, color=ACC2)
+        st.pyplot(fig1)
+    with c2:
+        st.subheader("Precios por Nivel")
+        fig2, ax2 = plt.subplots()
+        df.boxplot(column='price', by='difficulty_es', ax=ax2)
+        plt.xticks(rotation=45)
+        st.pyplot(fig2)
+
+with tab2:
+    st.subheader("Top 10 Cursos")
+    top10 = df.nlargest(10, 'students_clean')
+    fig3, ax3 = plt.subplots()
+    ax3.barh(top10['title'].str[:40], top10['students_clean'], color=ACC)
+    ax3.invert_yaxis()
+    st.pyplot(fig3)
+
+with tab3:
+    st.subheader("Simulador de Demanda")
+    num_rev = st.slider("Número de reseñas:", 0, 20000, 1000)
+    pred = (5.44 * num_rev) + 5397
+    st.success(f"### Estudiantes estimados: {int(pred):,}")
